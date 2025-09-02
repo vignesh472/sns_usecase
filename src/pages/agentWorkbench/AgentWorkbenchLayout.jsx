@@ -18,7 +18,7 @@ if(option==="Foundation Agents") {
 } else if(option==="Industry-Specific Agents") {
     slug="industry-specific-agents"
 }
-  setSelected(option.label);
+ setSelected(option);
 
   navigate(`/agent-workbench/${slug}`, { state: { type: option.label } });
 };

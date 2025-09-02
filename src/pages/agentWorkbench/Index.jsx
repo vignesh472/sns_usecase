@@ -174,7 +174,7 @@ const CategoryGrid = ({ data, onLearnMore, showCounts = true, showExploreMore = 
 export default function CategoryGridoverall() {
 const navigate = useNavigate();
  
- const { category } = useParams();
+ let { category } = useParams();
   let selectedCategory;
 if (category === "industry-specific-agents") {
   selectedCategory = { industry: agentsData.industry };
@@ -186,6 +186,9 @@ if (category === "industry-specific-agents") {
 }
 
     const handleLearnMore = (categoryId) => {
+         if(!category){
+            category="foundation-agents"
+        }
         navigate(`/agent-workbench/${category}/${categoryId}`);
         console.log(`Learning more about category: ${categoryId}`);
         // Handle navigation or modal opening here
