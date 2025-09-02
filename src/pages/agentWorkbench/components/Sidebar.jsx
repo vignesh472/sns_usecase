@@ -1,8 +1,7 @@
 import React, { useState, createContext, useContext } from "react";
-import { Outlet } from "react-router-dom";
-import { ChevronDown, ChevronUp, Search } from "lucide-react";
-
-import { Building2 } from "lucide-react";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
+import { ChevronDown, ChevronUp, Search, Building2 } from "lucide-react";
+import agentsData from "../../../../public/data/agentsData";
 
 // Custom scrollbar styles
 const scrollbarStyles = `
@@ -53,92 +52,38 @@ const Sidebar = () => {
   );
   const [selectedSubtopic, setSelectedSubtopic] = useState(null);
   const [search, setSearch] = useState("");
+  const navigate = useNavigate();
 
-  const categories = [
-    {
-      name: "Document & Knowledge Management",
-      subtopics: [
-        "Document Retrieval",
-        "Knowledge Graphs",
-        "Metadata Processing",
-        "Content Classification",
-        "Information Extraction",
-        "Text Mining",
-        "OCR Integration",
-      ],
-    },
-    {
-      name: "Summarization & Content Handling",
-      subtopics: [
-        "Text Summarization",
-        "Content Simplification",
-        "Semantic Compression",
-        "Context-Aware Summaries",
-        "Adaptive Shopping Summaries",
-        "Meeting Notes Extraction",
-      ],
-    },
-    {
-      name: "Communication & Assistance",
-      subtopics: [
-        "Chatbots",
-        "Virtual Assistants",
-        "Email Automation",
-        "Voice Interfaces",
-        "Customer Query Handling",
-        "Task Scheduling",
-      ],
-    },
-    {
-      name: "Business Intelligence & Analysis",
-      subtopics: [
-        "Data Dashboards",
-        "Predictive Analytics",
-        "Forecasting",
-        "Anomaly Detection",
-        "Market Trend Analysis",
-        "KPI Tracking",
-      ],
-    },
-    {
-      name: "Compliance & Security",
-      subtopics: [
-        "Risk Management",
-        "Access Control",
-        "Data Privacy",
-        "Fraud Detection",
-        "Audit Logs",
-        "Regulatory Compliance",
-      ],
-    },
-    {
-      name: "Data Management",
-      subtopics: [
-        "ETL Pipelines",
-        "Data Warehousing",
-        "Data Cleaning",
-        "Schema Management",
-        "Big Data Handling",
-        "API Integrations",
-      ],
-    },
-  ];
+  // Generate categories and subtopics from agentsData
+  const categories = agentsData.foundational.map(category => ({
+    id: category.id,
+    name: category.name,
+    subtopics: category.subCategories.map(subCat => ({
+      id: subCat.id,
+      name: subCat.name
+    }))
+  }));
 
-  const toggleCategory = (category) => {
+  const toggleCategory = (category, categoryId) => {
     setActiveCategory(activeCategory === category ? "" : category);
     if (activeCategory !== category) {
       setSelectedSubtopic(null); // Reset subtopic when changing category
+      
+      // Navigate to the category when clicked
+      navigate(`/agent-workbench/foundation-agents/${categoryId}`);
     }
   };
 
-  const handleSubtopicClick = (subtopic) => {
-    setSelectedSubtopic(subtopic);
+  const handleSubtopicClick = (subtopic, categoryId) => {
+    setSelectedSubtopic(subtopic.name);
+    // Navigate to the subcategory when clicked
+    navigate(`/agent-workbench/foundation-agents/${categoryId}/${subtopic.id}/agents`);
   };
 
   return (
     <>
       <style>{scrollbarStyles}</style>
-      <CategoryContext.Provider value={{ selectedSubtopic, activeCategory }}>
+      <CategoryContext.Provider value={{ selectedSubtopic, activeCategory, setActiveCategory, setSelectedSubtopic }}>
         <div className="flex h-screen w-full bg-white">
 
           {/* Sidebar */}
@@ -180,7 +125,7 @@ const Sidebar = () => {
                     >
                       {/* Category Header */}
                       <div
-                        onClick={() => toggleCategory(cat.name)}
+                        onClick={() => toggleCategory(cat.name, cat.id)}
                         className={`flex justify-between items-center cursor-pointer px-4 py-6 h-24 text-sm rounded-lg ${activeCategory === cat.name
                             ? "text-blue-700 font-medium"
                             : "text-gray-700 hover:bg-gray-50"
@@ -206,13 +151,13 @@ const Sidebar = () => {
                           {cat.subtopics.map((sub, i) => (
                             <li
                               key={i}
-                              onClick={() => handleSubtopicClick(sub)}
-                              className={`h-12 w-full rounded-lg cursor-pointer transition-colors flex items-center px-6 text-sm ${selectedSubtopic === sub
+                              onClick={() => handleSubtopicClick(sub, cat.id)}
+                              className={`h-12 w-full rounded-lg cursor-pointer transition-colors flex items-center px-6 text-sm ${selectedSubtopic === sub.name
                                   ? "bg-white font-medium  shadow-sm"
                                   : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"
                                 }`}
                             >
-                              {sub}
+                              {sub.name}
                             </li>
                           ))}
                         </ul>
