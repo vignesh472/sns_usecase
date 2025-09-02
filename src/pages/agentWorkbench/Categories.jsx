@@ -281,7 +281,7 @@ const allCategoriesData = {
               <p className="text-sm text-gray-600 leading-relaxed">
                 {item.description}
               </p>
-              <button onClick={()=>navigate(`/${item.id}/agents`)} className="text-blue-600 text-sm font-medium hover:text-blue-700 transition-colors">
+              <button onClick={()=>navigate(`/agent-workbench/${item.title}/${item.title}/${item.id}/agents`)} className="text-blue-600 text-sm font-medium hover:text-blue-700 transition-colors">
                 Learn More
               </button>
             </div>
